@@ -34,6 +34,10 @@ static uint16_t min_max_voltage[2];  //contains cell min[0] and max[1] values in
 static uint8_t cellcounter = 0;
 static uint32_t remaining_capacity = 0;
 static uint16_t cell_voltages[108];  //array with all the cellvoltages
+static bool startedUp = false;
+
+uint32_t timer_dtc_erase = 0;
+uint8_t send_frame = 0;
 
 CAN_frame VOLVO_536 = {.FD = false,
                        .ext_ID = false,
@@ -434,7 +438,29 @@ void transmit_can_battery() {
 
     if (datalayer.battery.status.bms_status == ACTIVE) {
       datalayer.system.status.battery_allows_contactor_closing = true;
-      transmit_can_frame(&VOLVO_140_CLOSE, can_config.battery);  //Send 0x140 Close contactors message
+      if (!startedUp) {
+
+        if(millis() - timer_dtc_erase >= 1000)
+        {   
+            timer_dtc_erase = millis();
+            send_frame++;
+
+            switch (send_frame)
+	        {
+	            case 1:
+		                transmit_can_frame(&VOLVO_140_OPEN, can_config.battery);   //Send 0x140 Open contactors message
+		          break;
+              case 2:
+                    transmit_can_frame(&VOLVO_DTC_Erase, can_config.battery);  //Erase any blocking DTCs
+              break;
+              case 3:
+                    transmit_can_frame(&VOLVO_DTC_Erase, can_config.battery);  //Erase any blocking DTCs
+                    startedUp = true;
+                    send_frame = 0;
+              break;
+          }        
+        }
+      }
     } else {  //datalayer.battery.status.bms_status == FAULT or inverter requested opening contactors
       datalayer.system.status.battery_allows_contactor_closing = false;
       transmit_can_frame(&VOLVO_140_OPEN, can_config.battery);  //Send 0x140 Open contactors message

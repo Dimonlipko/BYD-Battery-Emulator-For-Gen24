@@ -34,7 +34,7 @@
 //#define STELLANTIS_ECMP_BATTERY
 //#define TESLA_MODEL_3Y_BATTERY
 //#define TESLA_MODEL_SX_BATTERY
-//#define VOLVO_SPA_BATTERY
+#define VOLVO_SPA_BATTERY
 //#define TEST_FAKE_BATTERY
 //#define DOUBLE_BATTERY  //Enable this line if you use two identical batteries at the same time (requires CAN_ADDON setup)
 
@@ -45,7 +45,7 @@
 //#define BYD_MODBUS       //Enable this line to emulate a "BYD 11kWh HVM battery" over Modbus RTU
 //#define FOXESS_CAN       //Enable this line to emulate a "HV2600/ECS4100 battery" over CAN bus
 //#define PYLON_LV_CAN     //Enable this line to emulate a "48V Pylontech battery" over CAN bus
-//#define PYLON_CAN        //Enable this line to emulate a "High Voltage Pylontech battery" over CAN bus
+#define PYLON_CAN        //Enable this line to emulate a "High Voltage Pylontech battery" over CAN bus
 //#define SCHNEIDER_CAN    //Enable this line to emulate a "Schneider Version 2: SE BMS" over CAN bus
 //#define SMA_BYD_H_CAN    //Enable this line to emulate a "BYD Battery-Box H 8.9kWh, 7 mod" (SMA compatible) over CAN bus
 //#define SMA_BYD_HVS_CAN  //Enable this line to emulate a "BYD Battery-Box HVS 10.2KW battery" (SMA compatible) over CAN bus
@@ -55,7 +55,7 @@
 //#define SOLAX_CAN        //Enable this line to emulate a "SolaX Triple Power LFP" over CAN bus
 
 /* Select hardware used for Battery-Emulator */
-//#define HW_LILYGO
+#define HW_LILYGO
 //#define HW_STARK
 //#define HW_3LB
 //#define HW_DEVKIT
