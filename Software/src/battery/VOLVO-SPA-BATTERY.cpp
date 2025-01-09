@@ -35,9 +35,8 @@ static uint8_t cellcounter = 0;
 static uint32_t remaining_capacity = 0;
 static uint16_t cell_voltages[108];  //array with all the cellvoltages
 static bool startedUp = false;
-
-uint32_t timer_dtc_erase = 0;
-uint8_t send_frame = 0;
+static uint32_t timer_dtc_erase = 0; // timer for interval beetween send start frame
+static uint8_t send_frame = 0; // counter of id 0x140 start send
 
 CAN_frame VOLVO_536 = {.FD = false,
                        .ext_ID = false,
@@ -461,6 +460,7 @@ void transmit_can_battery() {
           }        
         }
       }
+      transmit_can_frame(&VOLVO_140_CLOSE, can_config.battery);  //Send 0x140 Close contactors message
     } else {  //datalayer.battery.status.bms_status == FAULT or inverter requested opening contactors
       datalayer.system.status.battery_allows_contactor_closing = false;
       transmit_can_frame(&VOLVO_140_OPEN, can_config.battery);  //Send 0x140 Open contactors message
