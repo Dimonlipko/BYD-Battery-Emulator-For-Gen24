@@ -1,7 +1,8 @@
 #ifndef CHADEMO_SHUNTS_H
 #define CHADEMO_SHUNTS_H
 
-#include "../lib/miwagner-ESP32-Arduino-CAN/ESP32CAN.h"
+#include <stdint.h>
+#include "../devboard/utils/types.h"
 
 uint16_t get_measured_voltage();
 uint16_t get_measured_current();

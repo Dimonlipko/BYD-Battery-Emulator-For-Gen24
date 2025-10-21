@@ -18,15 +18,10 @@
  *            by NJbubo
  *
  */
-#include "../include.h"
-#ifdef CHADEMO_BATTERY
+#include "CHADEMO-SHUNTS.h"
 #include "../datalayer/datalayer.h"
 #include "../devboard/utils/events.h"
-#include "../lib/miwagner-ESP32-Arduino-CAN/CAN_config.h"
-#include "../lib/miwagner-ESP32-Arduino-CAN/ESP32CAN.h"
-#include "CHADEMO-BATTERY-INTERNAL.h"
 #include "CHADEMO-BATTERY.h"
-#include "CHADEMO-SHUNTS.h"
 
 /* Initial frames received from ISA shunts provide invalid during initialization */
 static int framecount = 0;
@@ -91,17 +86,6 @@ void ISA_handleFrame(CAN_frame* frame) {
 
     case 0x510:
     case 0x511:
-      logging.print(millis());  // Example printout, time, ID, length, data: 7553  1DB  8  FF C0 B9 EA 0 0 2 5D
-      logging.print("  ");
-      logging.print(frame->ID, HEX);
-      logging.print("  ");
-      logging.print(frame->DLC);
-      logging.print("  ");
-      for (int i = 0; i < frame->DLC; ++i) {
-        logging.print(frame->data.u8[i], HEX);
-        logging.print(" ");
-      }
-      logging.println("");
       break;
 
     case 0x521:
@@ -240,12 +224,16 @@ inline void ISA_handle528(CAN_frame* frame) {
   lastWh = wh;
 }
 
+static void transmit_can_frame(CAN_frame* frame, CAN_Interface can_interface) {
+  transmit_can_frame_to_interface(frame, can_interface);
+}
+
 void ISA_initialize() {
   firstframe = false;
   ISA_STOP();
   delay(500);
   for (int i = 0; i < 8; i++) {
-    logging.print("ISA Initialization ");
+    logging.printf("ISA Initialization ");
     logging.println(i);
 
     outframe.data.u8[0] = (0x20 + i);
@@ -382,7 +370,7 @@ void ISA_initCurrent() {
 }
 
 void ISA_getCONFIG(uint8_t i) {
-  logging.print("ISA Get Config ");
+  logging.printf("ISA Get Config ");
   logging.println(i);
 
   outframe.data.u8[0] = (0x60 + i);
@@ -398,7 +386,7 @@ void ISA_getCONFIG(uint8_t i) {
 }
 
 void ISA_getCAN_ID(uint8_t i) {
-  logging.print("ISA Get CAN ID ");
+  logging.printf("ISA Get CAN ID ");
   logging.println(i);
 
   outframe.data.u8[0] = (0x50 + i);
@@ -418,8 +406,8 @@ void ISA_getCAN_ID(uint8_t i) {
 }
 
 void ISA_getINFO(uint8_t i) {
-  logging.print("ISA Get INFO ");
-  logging.println(i, HEX);
+  logging.printf("ISA Get INFO ");
+  logging.println(i);
 
   outframe.data.u8[0] = (0x70 + i);
   outframe.data.u8[1] = 0x00;
@@ -432,4 +420,3 @@ void ISA_getINFO(uint8_t i) {
 
   transmit_can_frame(&outframe, can_config.battery);
 }
-#endif
